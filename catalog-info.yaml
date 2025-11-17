@@ -1,0 +1,101 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: classroom-optimizer
+  title: Classroom Optimizer
+  description: AI-powered classroom seating optimization tool for teachers. Uses Google ADK and OR-Tools to create optimal seating arrangements based on student needs and constraints.
+  annotations:
+    backstage.io/techdocs-ref: dir:docs
+    backstage.io/source-location: url:https://github.com/pdaxh/classroom-optimizer
+    github.com/project-slug: pdaxh/classroom-optimizer
+    argoproj.io/instance: classroom-optimizer
+  tags:
+    - ai
+    - optimization
+    - education
+    - teachers
+    - google-adk
+    - or-tools
+  links:
+    - url: http://classroom-optimizer.local
+      title: Classroom Optimizer UI
+      icon: dashboard
+    - url: https://github.com/pdaxh/classroom-optimizer
+      title: GitHub Repository
+      icon: github
+spec:
+  type: service
+  lifecycle: experimental
+  owner: user:default/user
+  system: ulp-platform
+  providesApis:
+    - classroom-optimizer-api
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: classroom-optimizer-api
+  title: Classroom Optimizer API
+  description: API for the Classroom Optimizer service - seating arrangement optimization
+  annotations:
+    backstage.io/source-location: url:https://github.com/pdaxh/classroom-optimizer
+  tags:
+    - rest
+    - optimization
+spec:
+  type: openapi
+  lifecycle: experimental
+  owner: user:default/user
+  system: ulp-platform
+  definition: |
+    openapi: 3.0.0
+    info:
+      title: Classroom Optimizer API
+      version: 0.1.0
+      description: AI-powered classroom seating optimization
+    servers:
+      - url: http://classroom-optimizer.local
+        description: Local development
+      - url: http://localhost:7070
+        description: Port-forwarded access
+    paths:
+      /api/optimize:
+        post:
+          summary: Generate optimal seating arrangement
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    classroom:
+                      type: object
+                      properties:
+                        rows:
+                          type: integer
+                        columns:
+                          type: integer
+                    students:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          name:
+                            type: string
+                    constraints:
+                      type: array
+                      items:
+                        type: object
+          responses:
+            '200':
+              description: Optimal seating arrangement generated
+      /api/validate:
+        post:
+          summary: Validate constraint configuration
+          responses:
+            '200':
+              description: Validation results
+

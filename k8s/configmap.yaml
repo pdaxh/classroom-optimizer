@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: classroom-optimizer-config
+  labels:
+    app: classroom-optimizer
+data:
+  google-cloud-project: ""
+  log-level: "INFO"
+  debug: "false"
+  # Language setting: 'en' for English, 'sv' for Swedish
+  # Default: 'en'
+  language: "en"
+

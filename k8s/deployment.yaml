@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: classroom-optimizer
+  labels:
+    app: classroom-optimizer
+    app.kubernetes.io/name: classroom-optimizer
+    app.kubernetes.io/component: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: classroom-optimizer
+  template:
+    metadata:
+      labels:
+        app: classroom-optimizer
+        app.kubernetes.io/name: classroom-optimizer
+        app.kubernetes.io/component: backend
+    spec:
+      containers:
+      - name: classroom-optimizer
+        image: ghcr.io/pdaxh/classroom-optimizer:latest
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 7070
+          protocol: TCP
+        env:
+        - name: GOOGLE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: classroom-optimizer-secrets
+              key: google-api-key
+        - name: GOOGLE_CLOUD_PROJECT
+          valueFrom:
+            configMapKeyRef:
+              name: classroom-optimizer-config
+              key: google-cloud-project
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: classroom-optimizer-config
+              key: log-level
+        - name: OPTIMIZER_LANGUAGE
+          valueFrom:
+            configMapKeyRef:
+              name: classroom-optimizer-config
+              key: language
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          tcpSocket:
+            port: 7070
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          tcpSocket:
+            port: 7070
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          runAsNonRoot: true
+          runAsUser: 1000
+          capabilities:
+            drop:
+            - ALL
+
