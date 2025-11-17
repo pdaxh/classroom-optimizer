@@ -18,6 +18,8 @@ spec:
         app.kubernetes.io/name: classroom-optimizer
         app.kubernetes.io/component: backend
     spec:
+      imagePullSecrets:
+      - name: ghcr-secret
       containers:
       - name: classroom-optimizer
         image: ghcr.io/pdaxh/classroom-optimizer:latest
